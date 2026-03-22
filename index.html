@@ -87,7 +87,7 @@ body::after{
   margin:0 auto;
 }
 
-/* ── topbar ── */
+
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
   opacity:0;animation:fadeDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.05s forwards;
@@ -99,7 +99,7 @@ body::after{
 .logo .x{color:var(--accent);}
 .logo .tld{color:var(--muted2);font-weight:700;}
 
-/* ── status badge with pulse ring ── */
+
 .status{
   display:flex;align-items:center;gap:9px;
   font-size:0.61rem;color:var(--muted2);letter-spacing:0.12em;text-transform:uppercase;
@@ -123,7 +123,7 @@ body::after{
   position:relative;z-index:1;
   animation:dotpulse 2.5s ease infinite;
 }
-/* ring 1 */
+
 .dot-wrap::before{
   content:'';
   position:absolute;
@@ -132,7 +132,7 @@ body::after{
   border:1.5px solid rgba(61,220,132,0.5);
   animation:ring 2.5s ease infinite;
 }
-/* ring 2 */
+
 .dot-wrap::after{
   content:'';
   position:absolute;
@@ -152,7 +152,7 @@ body::after{
   100%{transform:scale(1.9);opacity:0;}
 }
 
-/* ── hero ── */
+
 .hero{
   display:flex;flex-direction:column;justify-content:center;
   padding-bottom:10px;
@@ -245,7 +245,7 @@ body::after{
 }
 
 
-/* tags */
+
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{
   font-size:0.59rem;letter-spacing:0.06em;
