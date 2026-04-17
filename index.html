@@ -7,6 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*{
+  -webkit-user-select:none;
+  user-select:none;
+}
+img,svg{
+  -webkit-user-drag:none;
+  user-drag:none;
+}
 
 :root{
   --bg:#07070a;
@@ -21,6 +29,18 @@
   --green:#3ddc84;
   --dim:#1e1e2a;
 }
+body.theme-green{
+  --accent:#3ddc84;
+  --accent2:#8ff3bd;
+}
+body.theme-red{
+  --accent:#ef4444;
+  --accent2:#fb7185;
+}
+body.theme-ice{
+  --accent:#58a6ff;
+  --accent2:#9bd1ff;
+}
 
 html,body{
   width:100%;height:100%;
@@ -32,58 +52,37 @@ html,body{
 
 body::before{
   content:'';position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(124,92,252,0.022) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(124,92,252,0.022) 1px,transparent 1px);
-  background-size:52px 52px;
-  pointer-events:none;z-index:0;
+  background:
+    linear-gradient(90deg,rgba(5,5,7,0.86),rgba(5,5,7,0.46) 42%,rgba(5,5,7,0.78)),
+    linear-gradient(180deg,rgba(5,5,7,0.48),rgba(5,5,7,0.84));
+  pointer-events:none;z-index:1;
 }
 body::after{
   content:'';position:fixed;inset:0;
   background:
-    radial-gradient(ellipse 70% 50% at 85% 5%, rgba(124,92,252,0.09) 0%, transparent 60%),
-    radial-gradient(ellipse 45% 35% at 8% 85%, rgba(61,220,132,0.04) 0%, transparent 55%),
-    radial-gradient(ellipse 55% 55% at 50% 50%, rgba(124,92,252,0.025) 0%, transparent 70%);
-  pointer-events:none;z-index:0;
+    radial-gradient(ellipse at center,transparent 0%,transparent 62%,rgba(0,0,0,0.52) 100%),
+    linear-gradient(117deg,rgba(255,255,255,0.012),transparent 36%,rgba(0,0,0,0.24) 70%,transparent);
+  pointer-events:none;z-index:1;
+  opacity:0.92;
 }
-.scanlines{
-  position:fixed;inset:0;
-  background:repeating-linear-gradient(
-    0deg,transparent,transparent 2px,
-    rgba(0,0,0,0.055) 2px,rgba(0,0,0,0.055) 4px
-  );
-  pointer-events:none;z-index:0;
+.bg-video{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:0;
+  pointer-events:none;
+  filter:saturate(0.82) contrast(1.08) brightness(0.74);
 }
-#bg-canvas{
-  position:fixed;inset:0;width:100%;height:100%;
-  pointer-events:none;z-index:0;opacity:0.22;
-}
-
-.glow{
-  position:fixed;width:800px;height:800px;border-radius:50%;
-  background:radial-gradient(circle,rgba(124,92,252,0.055) 0%,transparent 60%);
-  top:-300px;right:-250px;
-  pointer-events:none;z-index:0;
-  animation:gf 12s ease-in-out infinite alternate;
-  transition:transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
-}
-.glow2{
-  position:fixed;width:420px;height:420px;border-radius:50%;
-  background:radial-gradient(circle,rgba(167,139,250,0.028) 0%,transparent 70%);
-  bottom:-80px;left:-80px;
-  pointer-events:none;z-index:0;
-  animation:gf2 16s ease-in-out infinite alternate;
-}
-@keyframes gf{from{transform:translate(0,0) scale(1);}to{transform:translate(-50px,70px) scale(1.1);}}
-@keyframes gf2{from{transform:translate(0,0);}to{transform:translate(40px,-50px) scale(1.15);}}
 
 .shell{
-  position:relative;z-index:1;
+  position:relative;z-index:2;
   width:100%;height:100%;
   display:grid;
   grid-template-rows:auto 1fr auto;
-  padding:30px 54px 24px;
-  max-width:1080px;
+  padding:30px clamp(34px,6vw,92px) 24px;
+  max-width:1760px;
   margin:0 auto;
 }
 
@@ -154,9 +153,23 @@ body::after{
 
 
 .hero{
-  display:flex;flex-direction:column;justify-content:center;
+  --name-size:clamp(4.4rem,9vw,9.4rem);
+  --name-height:calc(var(--name-size) * 0.96);
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(360px,0.72fr);
+  grid-template-rows:auto var(--name-height) auto auto auto auto;
+  column-gap:clamp(44px,7vw,132px);
+  row-gap:0;
+  align-content:center;
+  align-items:center;
   padding-bottom:10px;
 }
+.eyebrow,.name-wrap,.tagline-wrap,.sep,.data-row{grid-column:1;}
+.eyebrow{grid-row:1;}
+.name-wrap{grid-row:2;}
+.tagline-wrap{grid-row:3;}
+.sep{grid-row:4;}
+.data-row{grid-row:5;}
 
 .eyebrow{
   display:flex;align-items:center;gap:12px;
@@ -166,14 +179,19 @@ body::after{
 }
 .ebline{width:18px;height:1px;background:var(--muted);}
 
-.name-wrap{overflow:hidden;margin-bottom:6px;}
+.name-wrap{
+  overflow:hidden;
+  margin-bottom:6px;
+  height:var(--name-height);
+  display:flex;
+  align-items:flex-end;
+  contain:layout paint;
+}
 .name{
   font-family:'Syne',sans-serif;font-weight:800;
-  font-size:clamp(3.8rem,7.5vw,6.8rem);
+  font-size:var(--name-size);
   letter-spacing:-0.045em;line-height:0.95;
   display:block;
-  transform:translateY(110%);
-  animation:slideUp 0.75s cubic-bezier(0.16,1,0.3,1) 0.48s forwards;
 }
 .cursor{
   display:inline-block;width:4px;height:0.8em;
@@ -186,10 +204,11 @@ body::after{
 .tagline-wrap{overflow:hidden;margin-bottom:40px;}
 .tagline{
   display:block;
-  font-size:clamp(0.76rem,1.4vw,0.92rem);
+  max-width:740px;
+  font-size:clamp(0.78rem,1vw,0.98rem);
   font-weight:300;color:var(--muted2);letter-spacing:0.015em;line-height:1.5;
-  transform:translateY(100%);
-  animation:slideUp 0.65s cubic-bezier(0.16,1,0.3,1) 0.68s forwards;
+  opacity:0;
+  animation:fadeUp 0.65s ease 0.68s forwards;
 }
 .tagline strong{color:var(--text);font-weight:400;}
 
@@ -201,10 +220,13 @@ body::after{
 }
 
 .data-row{
-  display:flex;align-items:flex-start;gap:44px;
+  display:grid;
+  grid-template-columns:minmax(180px,0.9fr) auto minmax(220px,1fr) auto minmax(160px,0.8fr);
+  align-items:flex-start;
+  gap:clamp(22px,2.7vw,48px);
   opacity:0;animation:fadeUp 0.55s ease 0.98s forwards;
 }
-.data-block{flex-shrink:0;}
+.data-block{min-width:0;}
 .data-label{
   font-size:0.57rem;letter-spacing:0.2em;text-transform:uppercase;
   color:var(--muted);margin-bottom:10px;
@@ -265,9 +287,325 @@ body::after{
   align-self:center;flex-shrink:0;
 }
 
+.presence-card{
+  grid-column:2;
+  grid-row:1 / span 5;
+  align-self:center;
+  width:100%;
+  margin-top:0;
+  opacity:0;
+  animation:fadeUp 0.5s ease 1.08s forwards;
+  will-change:opacity;
+}
+.presence-inner{
+  width:100%;
+  padding:18px;
+  border:1px solid rgba(124,92,252,0.18);
+  border-radius:6px;
+  background:
+    linear-gradient(135deg,rgba(18,18,25,0.92),rgba(8,8,12,0.72)),
+    radial-gradient(circle at 100% 0%,rgba(124,92,252,0.18),transparent 38%);
+  box-shadow:0 18px 54px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.035);
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:14px;
+  align-items:start;
+  animation:boxfloat 6.8s ease-in-out 1.7s infinite;
+  position:relative;
+  overflow:hidden;
+  transform:translate3d(0,0,0);
+  will-change:transform;
+}
+.presence-inner::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.035),transparent);
+  transform:translateX(-100%);
+  animation:panelscan 8s ease-in-out 2.4s infinite;
+  pointer-events:none;
+}
+.presence-inner::after{
+  content:'';
+  position:absolute;
+  top:0;right:18px;
+  width:72px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent2),transparent);
+  opacity:0.7;
+  pointer-events:none;
+}
+.presence-flow{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0.45;
+  z-index:0;
+}
+.presence-flow span{
+  position:absolute;
+  left:-35%;
+  width:44%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(61,220,132,0.0),rgba(61,220,132,0.55),rgba(167,139,250,0.0),transparent);
+  filter:drop-shadow(0 0 7px rgba(61,220,132,0.2));
+  animation:flowline 7s linear infinite;
+}
+.presence-flow span:nth-child(1){top:22%;animation-delay:0s;}
+.presence-flow span:nth-child(2){top:49%;animation-delay:2.1s;opacity:0.62;}
+.presence-flow span:nth-child(3){top:76%;animation-delay:4.4s;opacity:0.48;}
+.presence-pulse{
+  position:absolute;
+  width:5px;height:5px;
+  right:18px;bottom:17px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px rgba(61,220,132,0.65);
+  animation:signal 1.8s ease-in-out infinite;
+  pointer-events:none;
+  z-index:1;
+}
+.presence-avatar{
+  position:relative;
+  width:58px;height:58px;
+  border-radius:7px;
+  border:1px solid var(--border2);
+  background:var(--surface);
+  overflow:hidden;
+  flex-shrink:0;
+  z-index:1;
+}
+.presence-avatar img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+  opacity:0;
+  transition:opacity 0.18s;
+}
+.presence-avatar img.loaded{opacity:1;}
+.presence-status-dot{
+  position:absolute;
+  right:4px;bottom:4px;
+  width:11px;height:11px;
+  border:2px solid #09090d;
+  border-radius:50%;
+  background:var(--muted2);
+  box-shadow:0 0 10px rgba(94,94,122,0.35);
+}
+.presence-status-dot.online{background:var(--green);box-shadow:0 0 12px rgba(61,220,132,0.65);}
+.presence-status-dot.idle{background:#f0b84a;box-shadow:0 0 12px rgba(240,184,74,0.48);}
+.presence-status-dot.dnd{background:#ef4444;box-shadow:0 0 12px rgba(239,68,68,0.48);}
+.presence-main{min-width:0;position:relative;z-index:1;}
+.presence-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.presence-meta{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  margin:-4px 0 12px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,0.045);
+  color:var(--muted);
+  font-size:0.5rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+}
+.presence-meta span{
+  color:rgba(61,220,132,0.72);
+}
+.presence-name{
+  font-size:0.66rem;
+  color:var(--text);
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.presence-state{
+  flex-shrink:0;
+  font-size:0.52rem;
+  color:var(--muted2);
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+}
+.presence-list{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+}
+.presence-activity{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+  padding:10px 0 0;
+  border-top:1px solid rgba(255,255,255,0.045);
+  position:relative;
+  border-radius:4px;
+  transition:background 0.18s,border-color 0.18s;
+}
+.presence-activity::before{
+  content:'';
+  position:absolute;
+  left:-18px;
+  top:12px;
+  bottom:2px;
+  width:1px;
+  background:linear-gradient(180deg,transparent,rgba(124,92,252,0.32),transparent);
+  opacity:0;
+  animation:itemflow 4.8s ease-in-out infinite;
+}
+.presence-activity:first-child{
+  padding-top:0;
+  border-top:0;
+}
+.presence-activity:first-child::before{top:2px;}
+.presence-activity:hover{background:rgba(255,255,255,0.018);}
+.presence-activity.fresh{
+  animation:freshitem 0.62s ease both;
+}
+.presence-activity.spotify .presence-label{color:rgba(61,220,132,0.86);}
+.presence-activity.code .presence-label{color:rgba(88,166,255,0.9);}
+.presence-activity.game .presence-label{color:rgba(167,139,250,0.9);}
+.presence-activity.status .presence-label{color:rgba(216,216,232,0.62);}
+.presence-activity.spotify{
+  padding:12px;
+  margin:-2px 0 2px -2px;
+  border:1px solid rgba(61,220,132,0.11);
+  background:linear-gradient(135deg,rgba(61,220,132,0.055),rgba(124,92,252,0.035));
+}
+.presence-activity.spotify .presence-cover{width:58px;height:58px;box-shadow:0 0 24px rgba(61,220,132,0.16);}
+.presence-activity.spotify .presence-title{font-size:0.86rem;}
+.presence-activity.code .presence-icon{border-color:rgba(88,166,255,0.22);color:rgba(88,166,255,0.78);background:rgba(88,166,255,0.07);}
+.presence-activity.game .presence-icon{border-color:rgba(167,139,250,0.24);color:var(--accent2);}
+.presence-activity.status .presence-icon{opacity:0.72;}
+.presence-cover{
+  width:44px;height:44px;
+  border-radius:4px;
+  border:1px solid var(--border2);
+  background:rgba(124,92,252,0.08);
+  object-fit:cover;
+  display:block;
+  flex-shrink:0;
+}
+.presence-cover.cover-in{animation:coverin 0.5s ease both;}
+.presence-icon{
+  width:44px;height:44px;
+  border-radius:4px;
+  border:1px solid var(--border2);
+  background:rgba(124,92,252,0.08);
+  color:var(--muted2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.74rem;
+  flex-shrink:0;
+}
+.presence-copy{min-width:0;flex:1;}
+.presence-heading{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.presence-label{
+  font-size:0.55rem;
+  color:var(--muted);
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.presence-badge{
+  margin-left:auto;
+  padding:2px 6px;
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:2px;
+  color:var(--muted2);
+  font-size:0.46rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,0.025);
+  flex-shrink:0;
+}
+.presence-title,.presence-subtitle{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.presence-title{
+  font-size:0.78rem;
+  color:var(--text);
+  line-height:1.45;
+  width:100%;
+}
+.presence-title span{
+  display:inline-block;
+  max-width:100%;
+}
+.presence-title.marquee span{animation:marquee 9s linear infinite;}
+.presence-subtitle{
+  font-size:0.62rem;
+  color:var(--muted2);
+  line-height:1.35;
+}
+.presence-time{
+  margin-top:5px;
+  font-size:0.56rem;
+  color:var(--muted);
+  letter-spacing:0.06em;
+}
+.presence-progress{
+  width:100%;
+  height:3px;
+  margin-top:6px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,0.07);
+}
+.presence-progress span{
+  display:block;
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--green),var(--accent2));
+  box-shadow:0 0 12px rgba(61,220,132,0.28);
+  transition:width 0.25s linear;
+}
+.presence-eq{
+  display:inline-flex;
+  align-items:flex-end;
+  gap:2px;
+  height:10px;
+  flex-shrink:0;
+}
+.presence-eq i{
+  display:block;
+  width:2px;
+  height:4px;
+  border-radius:999px;
+  background:var(--green);
+  animation:eq 0.78s ease-in-out infinite alternate;
+}
+.presence-eq i:nth-child(2){animation-delay:0.16s;height:8px;}
+.presence-eq i:nth-child(3){animation-delay:0.31s;height:6px;}
+.presence-eq i:nth-child(4){animation-delay:0.08s;height:9px;}
+.presence-eq i:nth-child(5){animation-delay:0.24s;height:5px;}
+
 .cta-row{
-  display:flex;gap:10px;margin-top:38px;
-  opacity:0;animation:fadeUp 0.5s ease 1.12s forwards;
+  grid-column:2;
+  grid-row:6;
+  align-self:start;
+  display:flex;
+  gap:10px;
+  margin-top:22px;
+  opacity:0;animation:fadeUp 0.5s ease 1.22s forwards;
 }
 .btn{
   display:inline-flex;align-items:center;gap:8px;
@@ -276,12 +614,22 @@ body::after{
   font-size:0.67rem;letter-spacing:0.07em;
   text-decoration:none;cursor:pointer;border:none;
   transition:all 0.18s;
+  position:relative;
+  overflow:hidden;
+}
+.btn-ripple{
+  position:absolute;
+  width:10px;height:10px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.35);
+  transform:translate(-50%,-50%) scale(0);
+  animation:ripple 0.58s ease-out forwards;
+  pointer-events:none;
 }
 .btn-primary{background:var(--accent);color:#fff;}
 .btn-primary:hover{
   background:#6847f0;
   box-shadow:0 4px 22px rgba(124,92,252,0.28);
-  transform:translateY(-1px);
 }
 .btn-ghost{
   color:var(--muted2);background:transparent;
@@ -291,7 +639,6 @@ body::after{
   color:var(--text);
   border-color:rgba(124,92,252,0.28);
   background:rgba(124,92,252,0.04);
-  transform:translateY(-1px);
 }
 
 .footer{
@@ -313,30 +660,125 @@ body::after{
 .footer-links a:hover{color:var(--text);}
 
 @keyframes fadeDown{
-  from{opacity:0;transform:translateY(-10px);}
-  to{opacity:1;transform:translateY(0);}
+  from{opacity:0;}
+  to{opacity:1;}
 }
 @keyframes fadeUp{
-  from{opacity:0;transform:translateY(12px);}
-  to{opacity:1;transform:translateY(0);}
+  from{opacity:0;}
+  to{opacity:1;}
 }
-@keyframes slideUp{
-  from{transform:translateY(110%);}
-  to{transform:translateY(0);}
+@keyframes boxfloat{
+  0%,100%{transform:translate3d(0,0,0);}
+  50%{transform:translate3d(0,-8px,0);}
+}
+@keyframes panelscan{
+  0%,42%{transform:translateX(-100%);opacity:0;}
+  52%{opacity:1;}
+  70%,100%{transform:translateX(100%);opacity:0;}
+}
+@keyframes flowline{
+  0%{transform:translateX(0);opacity:0;}
+  12%{opacity:1;}
+  78%{opacity:0.72;}
+  100%{transform:translateX(310%);opacity:0;}
+}
+@keyframes signal{
+  0%,100%{transform:scale(0.88);opacity:0.45;}
+  50%{transform:scale(1.2);opacity:1;}
+}
+@keyframes itemflow{
+  0%,58%,100%{opacity:0;transform:translateY(-4px);}
+  72%{opacity:1;}
+  86%{opacity:0.25;transform:translateY(6px);}
+}
+@keyframes freshitem{
+  0%{background:rgba(124,92,252,0.11);filter:brightness(1.2);}
+  100%{background:transparent;filter:brightness(1);}
+}
+@keyframes coverin{
+  from{opacity:0;filter:blur(8px);transform:scale(0.92);}
+  to{opacity:1;filter:blur(0);transform:scale(1);}
+}
+@keyframes eq{
+  from{transform:scaleY(0.45);opacity:0.55;}
+  to{transform:scaleY(1);opacity:1;}
+}
+@keyframes ripple{
+  to{transform:translate(-50%,-50%) scale(22);opacity:0;}
+}
+@keyframes marquee{
+  0%,18%{transform:translateX(0);}
+  82%,100%{transform:translateX(calc(-100% + 220px));}
+}
+@media (max-width:760px){
+  html,body{overflow:auto;min-height:100%;}
+  .shell{
+    min-height:100%;
+    height:auto;
+    padding:22px 20px 18px;
+  }
+  .hero{
+    --name-size:clamp(3.8rem,18vw,5.4rem);
+    --name-height:calc(var(--name-size) * 0.96);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:stretch;
+  }
+  .eyebrow{order:1;}
+  .name-wrap{order:2;}
+  .tagline-wrap{order:3;}
+  .presence-card{order:4;}
+  .cta-row{order:5;}
+  .sep{order:6;}
+  .data-row{order:7;}
+  .data-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+  }
+  .vdiv{display:none;}
+  .presence-card{
+    grid-template-columns:1fr;
+    width:100%;
+    margin-top:30px;
+  }
+  .presence-flow{opacity:0.25;}
+  .presence-meta{font-size:0.48rem;}
+  .presence-avatar{display:none;}
+  .presence-top{align-items:flex-start;}
+  .cta-row{flex-wrap:wrap;}
+  .btn{justify-content:center;min-width:150px;}
+  .footer{gap:16px;flex-wrap:wrap;}
+}
+
+@media (min-width:761px) and (max-width:1120px){
+  html,body{overflow:auto;min-height:100%;}
+  .shell{
+    height:auto;
+    min-height:100%;
+    padding-inline:34px;
+  }
+  .hero{
+    grid-template-columns:1fr;
+    padding:64px 0;
+  }
+  .presence-card,.cta-row{grid-column:1;grid-row:auto;}
+  .presence-card{margin-top:30px;max-width:640px;}
+  .cta-row{margin-top:22px;}
 }
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div class="scanlines"></div>
-<div class="glow"></div>
-<div class="glow2"></div>
+<video class="bg-video" autoplay muted loop playsinline preload="auto">
+  <source src="./assets/background.mp4" type="video/mp4"/>
+</video>
 
 <div class="shell">
 
   <div class="topbar">
-    <a href="#" class="logo">ryq<span class="x">x</span>zs<span class="tld">.wtf</span></a>
+    <a href="#" class="logo" id="theme-switch">ryq<span class="x">x</span>zs<span class="tld">.wtf</span></a>
     <div class="status">
       <div class="dot-wrap">
         <div class="dot"></div>
@@ -409,6 +851,27 @@ body::after{
 
     </div>
 
+    <div class="presence-card" id="presence-card">
+      <div class="presence-inner">
+        <div class="presence-flow"><span></span><span></span><span></span></div>
+        <div class="presence-pulse"></div>
+        <div class="presence-avatar">
+          <img id="presence-avatar" alt="Discord avatar"/>
+          <span class="presence-status-dot" id="presence-status-dot"></span>
+        </div>
+        <div class="presence-main">
+          <div class="presence-top">
+            <div class="presence-name" id="presence-name">Discord Presence</div>
+            <div class="presence-state" id="presence-state">loading</div>
+          </div>
+          <div class="presence-meta">
+            <span id="presence-sync">standby</span>
+          </div>
+          <div class="presence-list" id="presence-list"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="cta-row">
       <a href="https://discord.com/users/945697135226130462" target="_blank" class="btn btn-primary">
         <svg width="12" height="12" viewBox="0 0 127.14 96.36" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
@@ -439,91 +902,15 @@ body::after{
     snd.play().catch(()=>{});
   }
 
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H;
-  let mouse = { x: -999, y: -999 };
+  const themeSwitch = document.getElementById('theme-switch');
 
-  function resize() {
-    W = canvas.width = innerWidth;
-    H = canvas.height = innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  const dots = Array.from({ length: 70 }, () => ({
-    x: Math.random() * innerWidth,
-    y: Math.random() * innerHeight,
-    r: Math.random() * 1.4 + 0.3,
-    vx: (Math.random() - 0.5) * 0.22,
-    vy: (Math.random() - 0.5) * 0.22,
-    o: Math.random() * 0.45 + 0.12
-  }));
-
-  function drawBg() {
-    ctx.clearRect(0, 0, W, H);
-
-    dots.forEach(d => {
-      const dx = mouse.x - d.x;
-      const dy = mouse.y - d.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120) {
-        const force = (120 - dist) / 120;
-        d.x -= dx * force * 0.03;
-        d.y -= dy * force * 0.03;
-      }
-      d.x += d.vx;
-      d.y += d.vy;
-      if (d.x < 0) d.x = W;
-      if (d.x > W) d.x = 0;
-      if (d.y < 0) d.y = H;
-      if (d.y > H) d.y = 0;
-
-      const mdist = Math.sqrt((mouse.x - d.x) ** 2 + (mouse.y - d.y) ** 2);
-      const bright = mdist < 180 ? 1 + (1 - mdist / 180) * 1.6 : 1;
-
-      ctx.beginPath();
-      ctx.arc(d.x, d.y, d.r * bright, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(124,92,252,${Math.min(d.o * bright, 0.9)})`;
-      ctx.fill();
-    });
-
-    for (let i = 0; i < dots.length; i++) {
-      for (let j = i + 1; j < dots.length; j++) {
-        const a = dots[i], b = dots[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150) {
-          const mdistA = Math.sqrt((mouse.x - a.x) ** 2 + (mouse.y - a.y) ** 2);
-          const near = mdistA < 200 ? 0.22 : 0.07;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(124,92,252,${near * (1 - dist / 150)})`;
-          ctx.lineWidth = 0.6;
-          ctx.stroke();
-        }
-      }
-      const mdist = Math.sqrt((mouse.x - dots[i].x) ** 2 + (mouse.y - dots[i].y) ** 2);
-      if (mdist < 200) {
-        ctx.beginPath();
-        ctx.moveTo(dots[i].x, dots[i].y);
-        ctx.lineTo(mouse.x, mouse.y);
-        ctx.strokeStyle = `rgba(124,92,252,${0.18 * (1 - mdist / 200)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    }
-
-    requestAnimationFrame(drawBg);
-  }
-  drawBg();
-
-  document.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    const g = document.querySelector('.glow');
-    g.style.transform = `translate(${(e.clientX / innerWidth - 0.5) * 38}px,${(e.clientY / innerHeight - 0.5) * 38}px)`;
+  const calmThemes = ['', 'theme-green', 'theme-red', 'theme-ice'];
+  let hammerTheme = 0;
+  themeSwitch.addEventListener('click', e => {
+    e.preventDefault();
+    document.body.classList.remove(...calmThemes.filter(Boolean));
+    hammerTheme = (hammerTheme + 1) % calmThemes.length;
+    if (calmThemes[hammerTheme]) document.body.classList.add(calmThemes[hammerTheme]);
   });
 
   const el = document.getElementById('typed');
@@ -570,6 +957,323 @@ body::after{
   }
 
   setTimeout(run, 500);
+
+  const ryqxzsomgomg = '945697135226130462';
+  const timgioh = `https://api.lanyard.rest/v1/users/${ryqxzsomgomg}`;
+  const hammer = 7000;
+  const calm = {
+    avatar: document.getElementById('presence-avatar'),
+    statusDot: document.getElementById('presence-status-dot'),
+    name: document.getElementById('presence-name'),
+    state: document.getElementById('presence-state'),
+    sync: document.getElementById('presence-sync'),
+    list: document.getElementById('presence-list')
+  };
+  const montemanyees = {
+    online: 'online',
+    idle: 'idle',
+    dnd: 'do not disturb',
+    offline: 'offline'
+  };
+  let ryqxzsomgomgTimer = null;
+  let timgiohTimer = null;
+  let calmSyncTimer = null;
+  let montemanyeesSpotify = null;
+  let hammerSnapshot = '';
+  let calmSynced = 0;
+
+  function assetUrl(timgioh, hammer) {
+    if (!timgioh || !hammer) return '';
+    if (hammer.startsWith('mp:')) return `https://media.discordapp.net/${hammer.slice(3)}`;
+    if (hammer.startsWith('spotify:')) return `https://i.scdn.co/image/${hammer.slice(8)}`;
+    if (/^https?:\/\//.test(hammer)) return hammer;
+    return `https://cdn.discordapp.com/app-assets/${timgioh.application_id}/${hammer}.png`;
+  }
+
+  function activityLabel(calm) {
+    if (!calm) return 'Live now';
+    if (calm.type === 0) return 'Playing';
+    if (calm.type === 1) return 'Streaming';
+    if (calm.type === 2) return 'Listening';
+    if (calm.type === 3) return 'Watching';
+    if (calm.type === 4) return 'Custom status';
+    if (calm.type === 5) return 'Competing';
+    return 'Active now';
+  }
+
+  function formatSpotifyTime(timgioh) {
+    const hammer = Math.max(0, Math.floor(timgioh / 1000));
+    const calm = Math.floor(hammer / 60);
+    const montemanyees = String(hammer % 60).padStart(2, '0');
+    return `${calm}:${montemanyees}`;
+  }
+
+  function addActivityItem({ label: timgioh, title: montemanyees, subtitle: hammerText, image: ryqxzsomgomg, icon: hammerIcon, spotify: calmSpotify, type: calmType, badge: montemanyeesBadge, fresh: timgiohFresh }) {
+    const hammerItem = document.createElement('div');
+    hammerItem.className = `presence-activity ${calmType || 'status'}`;
+    if (timgiohFresh) hammerItem.classList.add('fresh');
+
+    if (ryqxzsomgomg) {
+      const timgiohImg = document.createElement('img');
+      timgiohImg.className = 'presence-cover';
+      if (calmType === 'spotify') timgiohImg.classList.add('cover-in');
+      timgiohImg.alt = '';
+      timgiohImg.src = ryqxzsomgomg;
+      hammerItem.appendChild(timgiohImg);
+    } else {
+      const montemanyeesIcon = document.createElement('div');
+      montemanyeesIcon.className = 'presence-icon';
+      montemanyeesIcon.textContent = hammerIcon || '>';
+      hammerItem.appendChild(montemanyeesIcon);
+    }
+
+    const ryqxzsomgomgCopy = document.createElement('div');
+    const calmHead = document.createElement('div');
+    const timgiohLabel = document.createElement('div');
+    const hammerBadge = document.createElement('div');
+    const montemanyeesTitle = document.createElement('div');
+    const hammerTitle = document.createElement('span');
+    const calmSub = document.createElement('div');
+    ryqxzsomgomgCopy.className = 'presence-copy';
+    calmHead.className = 'presence-heading';
+    timgiohLabel.className = 'presence-label';
+    hammerBadge.className = 'presence-badge';
+    montemanyeesTitle.className = `presence-title${String(montemanyees).length > 28 ? ' marquee' : ''}`;
+    calmSub.className = 'presence-subtitle';
+    timgiohLabel.textContent = timgioh;
+    hammerBadge.textContent = montemanyeesBadge || (calmType || 'live');
+    hammerTitle.textContent = montemanyees;
+    calmSub.textContent = hammerText;
+
+    if (calmType === 'spotify') {
+      const calmEq = document.createElement('span');
+      calmEq.className = 'presence-eq';
+      calmEq.innerHTML = '<i></i><i></i><i></i><i></i><i></i>';
+      calmHead.appendChild(calmEq);
+    }
+
+    calmHead.appendChild(timgiohLabel);
+    calmHead.appendChild(hammerBadge);
+    montemanyeesTitle.appendChild(hammerTitle);
+    ryqxzsomgomgCopy.appendChild(calmHead);
+    ryqxzsomgomgCopy.appendChild(montemanyeesTitle);
+    ryqxzsomgomgCopy.appendChild(calmSub);
+
+    if (calmSpotify) {
+      const timgiohTime = document.createElement('div');
+      const hammerBar = document.createElement('div');
+      const montemanyeesFill = document.createElement('span');
+      timgiohTime.className = 'presence-time';
+      hammerBar.className = 'presence-progress';
+      hammerBar.appendChild(montemanyeesFill);
+      ryqxzsomgomgCopy.appendChild(timgiohTime);
+      ryqxzsomgomgCopy.appendChild(hammerBar);
+      montemanyeesSpotify = {
+        start: calmSpotify.start,
+        end: calmSpotify.end,
+        time: timgiohTime,
+        fill: montemanyeesFill
+      };
+      updateSpotifyTime();
+    }
+
+    hammerItem.appendChild(ryqxzsomgomgCopy);
+    calm.list.appendChild(hammerItem);
+  }
+
+  function updateSpotifyTime() {
+    if (!montemanyeesSpotify) return;
+    const timgioh = Date.now();
+    const hammer = montemanyeesSpotify.start || timgioh;
+    const calmTime = montemanyeesSpotify.end || timgioh;
+    const ryqxzsomgomg = Math.max(0, timgioh - hammer);
+    const calmTotal = Math.max(1, calmTime - hammer);
+    const hammerNow = Math.min(ryqxzsomgomg, calmTotal);
+    const montemanyees = Math.min(100, Math.max(0, (ryqxzsomgomg / calmTotal) * 100));
+    montemanyeesSpotify.time.textContent = `${formatSpotifyTime(hammerNow)} / ${formatSpotifyTime(calmTotal)}`;
+    montemanyeesSpotify.fill.style.width = `${montemanyees}%`;
+  }
+
+  function updateSyncTime() {
+    if (!calmSynced) return;
+    const timgioh = Math.max(0, Math.floor((Date.now() - calmSynced) / 1000));
+    calm.sync.textContent = timgioh < 1 ? 'synced now' : `synced ${timgioh}s ago`;
+  }
+
+  function activityToItem(timgioh) {
+    const hammer = timgioh.type === 4
+      ? (timgioh.state || timgioh.name || 'Custom status')
+      : (timgioh.name || 'Discord activity');
+    const calm = timgioh.type === 4
+      ? 'Discord custom status'
+      : [timgioh.details, timgioh.state].filter(Boolean).join(' - ') || 'Discord activity';
+    const montemanyees = assetUrl(timgioh, timgioh.assets && (timgioh.assets.large_image || timgioh.assets.small_image));
+    const ryqxzsomgomg = /visual studio code|code/i.test(timgioh.name || '')
+      ? 'code'
+      : timgioh.type === 0
+        ? 'game'
+        : timgioh.type === 4
+          ? 'status'
+          : 'activity';
+    return {
+      label: activityLabel(timgioh),
+      title: hammer,
+      subtitle: calm,
+      image: montemanyees,
+      icon: ryqxzsomgomg === 'code' ? '</>' : timgioh.type === 4 ? '#' : '>',
+      type: ryqxzsomgomg,
+      badge: ryqxzsomgomg === 'code' ? 'dev' : ryqxzsomgomg === 'game' ? 'play' : 'live'
+    };
+  }
+
+  function updatePresence(data) {
+    const timgioh = data.discord_user || {};
+    const hammer = data.discord_status || 'offline';
+    const ryqxzsomgomgName = timgioh.global_name || timgioh.display_name || timgioh.username || 'ryqxzs';
+    const hammerAvatar = timgioh.avatar
+      ? `https://cdn.discordapp.com/avatars/${timgioh.id}/${timgioh.avatar}.png?size=128`
+      : '';
+
+    calm.name.textContent = ryqxzsomgomgName;
+    calm.state.textContent = montemanyees[hammer] || hammer;
+    calmSynced = Date.now();
+    updateSyncTime();
+    calm.statusDot.className = `presence-status-dot ${hammer}`;
+
+    if (hammerAvatar && calm.avatar.src !== hammerAvatar) {
+      calm.avatar.classList.remove('loaded');
+      calm.avatar.src = hammerAvatar;
+    }
+
+    const freshNow = JSON.stringify({
+      status: hammer,
+      spotify: data.spotify ? [data.spotify.song, data.spotify.artist] : null,
+      activities: (data.activities || []).map(timgioh => [timgioh.name, timgioh.details, timgioh.state, timgioh.type])
+    });
+    const timgiohFresh = hammerSnapshot && hammerSnapshot !== freshNow;
+    hammerSnapshot = freshNow;
+
+    calm.list.innerHTML = '';
+    montemanyeesSpotify = null;
+
+    if (data.listening_to_spotify && data.spotify) {
+      addActivityItem({
+        label: 'Listening on Spotify',
+        title: data.spotify.song || 'Unknown track',
+        subtitle: data.spotify.artist
+          ? `${data.spotify.artist}${data.spotify.album ? ` - ${data.spotify.album}` : ''}`
+          : 'Spotify activity',
+        image: data.spotify.album_art_url,
+        icon: 'S',
+        spotify: data.spotify.timestamps,
+        type: 'spotify',
+        badge: 'now',
+        fresh: timgiohFresh
+      });
+    }
+
+    (data.activities || [])
+      .filter(timgioh => timgioh && timgioh.name && timgioh.name !== 'Spotify')
+      .map(activityToItem)
+      .map(timgioh => ({ ...timgioh, fresh: timgiohFresh }))
+      .forEach(addActivityItem);
+
+    if (!calm.list.children.length) {
+      addActivityItem({
+        label: hammer === 'offline' ? 'Last seen' : 'Live now',
+        title: hammer === 'offline' ? 'Currently offline' : 'No public activity',
+        subtitle: hammer === 'offline'
+          ? 'Discord is not showing a live presence right now'
+          : 'Online, but not listening or playing anything public',
+        icon: hammer === 'offline' ? 'x' : '>',
+        type: 'status',
+        badge: hammer,
+        fresh: timgiohFresh
+      });
+    }
+  }
+
+  async function loadPresence() {
+    try {
+      const montemanyees = await fetch(timgioh, { cache: 'no-store' });
+      if (!montemanyees.ok) throw new Error('Presence request failed');
+      const hammer = await montemanyees.json();
+      if (!hammer.success || !hammer.data) throw new Error('Presence data missing');
+      updatePresence(hammer.data);
+    } catch (hammer) {
+      calm.state.textContent = 'unavailable';
+      calmSynced = 0;
+      calm.sync.textContent = 'retry';
+      calm.list.innerHTML = '';
+      addActivityItem({
+        label: 'Discord preview',
+        title: 'Live data unavailable',
+        subtitle: 'Lanyard did not return presence data',
+        icon: '!',
+        type: 'status',
+        badge: 'api'
+      });
+    }
+  }
+
+  calm.avatar.addEventListener('load', () => calm.avatar.classList.add('loaded'));
+  loadPresence();
+  ryqxzsomgomgTimer = setInterval(loadPresence, hammer);
+  timgiohTimer = setInterval(updateSpotifyTime, 1000);
+  calmSyncTimer = setInterval(updateSyncTime, 1000);
+  window.addEventListener('beforeunload', () => {
+    clearInterval(ryqxzsomgomgTimer);
+    clearInterval(timgiohTimer);
+    clearInterval(calmSyncTimer);
+  });
+
+  function triggerInspectRefresh() {
+    location.reload();
+  }
+
+  document.addEventListener('contextmenu', event => {
+    event.preventDefault();
+    triggerInspectRefresh();
+  });
+  document.addEventListener('selectstart', event => event.preventDefault());
+  document.addEventListener('dragstart', event => event.preventDefault());
+
+  document.querySelectorAll('.btn').forEach(timgioh => {
+    timgioh.addEventListener('click', event => {
+      const hammer = timgioh.getBoundingClientRect();
+      const calm = document.createElement('span');
+      calm.className = 'btn-ripple';
+      calm.style.left = `${event.clientX - hammer.left}px`;
+      calm.style.top = `${event.clientY - hammer.top}px`;
+      timgioh.appendChild(calm);
+      setTimeout(() => calm.remove(), 620);
+    });
+  });
+
+  document.addEventListener('keydown', event => {
+    const hammer = event.key.toLowerCase();
+    const calm = hammer === 'f12' ||
+      (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(hammer)) ||
+      (event.ctrlKey && ['u', 's'].includes(hammer)) ||
+      (event.metaKey && event.altKey && ['i', 'j', 'c'].includes(hammer)) ||
+      (event.metaKey && ['u', 's'].includes(hammer));
+
+    if (calm) {
+      event.preventDefault();
+      event.stopPropagation();
+      triggerInspectRefresh();
+    }
+  }, true);
+
+  setInterval(() => {
+    const timgioh = 160;
+    const montemanyees = Math.abs(window.outerWidth - window.innerWidth);
+    const ryqxzsomgomg = Math.abs(window.outerHeight - window.innerHeight);
+
+    if (montemanyees > timgioh || ryqxzsomgomg > timgioh) {
+      triggerInspectRefresh();
+    }
+  }, 900);
 </script>
 
 </body>
